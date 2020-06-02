@@ -4,6 +4,7 @@ import pandas as pd
 import seaborn as sns
 
 from sklearn import metrics
+from sklearn.datasets import load_boston
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from utils import wait_for_enter
@@ -13,9 +14,10 @@ def print_and_wait(*output):
     wait_for_enter()
 
 def main():
+    boston = load_boston()
 
     # Fetch data and print info
-    df = pd.read_csv('data/USA_Housing.csv')
+    df = pd.DataFrame(boston['data'], boston['target'], columns=boston['feature_names'])
 
     print_and_wait(df.head())
 
@@ -29,7 +31,7 @@ def main():
     plt.savefig('output/pairplot.png')
     plt.clf()
 
-    sns.distplot(df['Price'])
+    sns.distplot(df.index)
     plt.savefig('output/distplot_price.png')
     plt.clf()
 
@@ -39,8 +41,8 @@ def main():
 
 
     # Training a Linear Regression Model
-    X = df[df.columns[:-2]]
-    y = df['Price']
+    X = df[df.columns]
+    y = df.index
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=101)
 
